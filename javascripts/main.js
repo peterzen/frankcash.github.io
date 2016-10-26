@@ -1,9 +1,4 @@
-var app = angular.module("app", ['angular-loading-bar']);
-
-
-
-var app = angular.module("app", ['angular-loading-bar']);
-
+var app = angular.module("app", []);
 app.controller("AppTest", function($scope, $http){
   /**
   * global vars
