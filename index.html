@@ -47,7 +47,7 @@
         <div>
           <h3>Pull Requests</h3>
           <ul ng-repeat="pr in pullRequests">
-            <li>{{pr.repository}}: <a href="{{pr.url}}">{{pr.title}}</a></li>
+            <li>{{pr.repository}}: <a href="{{pr.url}}">{{pr.title}}</a> <span class="code">{{pr.language}}</span></li>
           </ul>
         </div>
       </section>
