@@ -1,0 +1,42 @@
+    [  {
+           "title": "Fixes text alignment of notracking",
+           "repository": "EFForg/privacybadgerfirefox",
+           "url": "https://github.com/EFForg/privacybadgerfirefox/pull/626",
+           "language": "CSS"
+       },
+       {
+           "title": "Adds a nevermind option for decrypt/encrypt",
+           "repository": "henryboldi/felony",
+           "url": "https://github.com/henryboldi/felony/pull/75",
+           "language": "node.js"
+       },
+       {
+           "title": "Adds four unit tests for src/util",
+           "repository": "NullHypothesis/exitmap",
+           "url": "https://github.com/NullHypothesis/exitmap/pull/26",
+           "language": "Python 2.7"
+       },
+       {
+           "title": "adds .npmignore",
+           "repository": "github/fetch",
+           "url": "https://github.com/github/fetch/pull/84",
+           "language": "JavaScript"
+       },
+       {
+           "title": "Removes unused import",
+           "repository": "duckduckgo/zeroclickinfo-spice",
+           "url": "https://github.com/duckduckgo/zeroclickinfo-spice/pull/1382",
+           "language": "Perl"
+       },
+       {
+           "title" : "Creates way to change DB and Collection",
+           "repository" : "mjkaufer/Mongit",
+           "url" : "https://github.com/mjkaufer/Mongit/pull/6",
+           "language": "node.js"
+       },
+       {
+           "title" : "Adds adding temp user test",
+           "repository" : "StDako/node-email-verification",
+           "url" : "https://github.com/StDako/node-email-verification/pull/3",
+           "language" : "node.js"
+       } ]
