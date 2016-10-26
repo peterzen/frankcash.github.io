@@ -8,14 +8,14 @@
     <link rel="stylesheet" type="text/css" href="../stylesheets/github-dark.css" media="screen">
     <link rel="stylesheet" type="text/css" href="../stylesheets/print.css" media="print">
 
-    <title></title>
+    <title>CTF Write Ups</title>
   </head>
 
   <body>
 
     <header>
       <div class="container">
-        <h1>Frankcash.GitHub.io</h1>
+        <h1>CTF Write Ups</h1>
       </div>
     </header>
 
@@ -119,7 +119,6 @@
             <h2>Misc 100: (Solved)</h2>
             <p><b>Problem:</b> Broken .png file (m100.png)</p>
             <p><b>Solution:</b> I utilized a bunch of tools on this problem. First I ran pngcheck to see what the problem was. I then did some research and found out this is a checksum error. So I then utilized PNGCSum to fix it. After that the picture was finally "fixed." But something appeared to be cut off. I then edited the headers to resize it from 666x519 to 666x666. This revealed the text, which was crooked. I opened the image in GNU Image Processor to change the perspective of the text.</p>
-            <img src="/static/pics/m100_solved.png" height="300"/>
             <p><b>Flag:</b> <span class="code">s1z3_d03s_ma773r_baby</span></p>
           </div>
 
