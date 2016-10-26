@@ -7,11 +7,11 @@
     <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
     <link rel="stylesheet" type="text/css" href="stylesheets/github-dark.css" media="screen">
     <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
-
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular.min.js"></script>
     <title>frankcash.GitHub.io by frankcash</title>
   </head>
 
-  <body>
+  <body ng-app="app" ng-controller="AppTest as app">
 
     <header>
       <div class="container">
@@ -42,6 +42,13 @@
               <li><a href="/ctf/writeups.html#defcamp2015">DefCamp 2015</a></li>
               <li><a href="/ctf/writeups.html#csaw2015">CSAW 2016</a></li>
             </ul>
+        </div>
+
+        <div>
+          <h3>Pull Requests</h3>
+          <ul ng-repeat="pr in pullRequests">
+            <li>{{pr.title}}</li>
+          </ul>
         </div>
       </section>
     </div>
