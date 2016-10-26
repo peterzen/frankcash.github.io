@@ -1,4 +1,10 @@
-    [  {
+    [ {
+           "title": "Adds travis-ci",
+           "repository": "nccgroup/featherduster",
+           "url": "https://github.com/nccgroup/featherduster/pull/43",
+           "language": "Python 2.7"
+       },
+      {
            "title": "Fixes text alignment of notracking",
            "repository": "EFForg/privacybadgerfirefox",
            "url": "https://github.com/EFForg/privacybadgerfirefox/pull/626",
