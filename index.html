@@ -44,11 +44,10 @@
               <li><a href="/ctf/writeups.html#csaw2015">CSAW 2016</a></li>
             </ul>
         </div>
-
         <div>
           <h3>Pull Requests</h3>
           <ul ng-repeat="pr in pullRequests">
-            <li>{{pr.title}}</li>
+            <li>{{pr.repository}}: <a href="{{pr.url}}">{{pr.title}}</a></li>
           </ul>
         </div>
       </section>
