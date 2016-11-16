@@ -1,4 +1,10 @@
     [ {
+           "title": "Adds unit tests for panel.write()",
+           "repository": "trystan/AsciiPanel",
+           "url": "https://github.com/trystan/AsciiPanel/pull/6",
+           "language": "Java"
+       },
+        {
            "title": "Adds travis-ci",
            "repository": "nccgroup/featherduster",
            "url": "https://github.com/nccgroup/featherduster/pull/43",
