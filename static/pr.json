@@ -1,4 +1,12 @@
-    [ {
+    [ 
+        
+          {
+           "title": "Yarn Support",
+           "repository": "diracdeltas/signal-muon",
+           "url": "https://github.com/diracdeltas/signal-muon/pull/37",
+           "language": "node.js"
+       },
+        {
            "title": "Adds unit tests for panel.write()",
            "repository": "trystan/AsciiPanel",
            "url": "https://github.com/trystan/AsciiPanel/pull/6",
