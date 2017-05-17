@@ -19,82 +19,83 @@
       </div>
     </header>
 
+    <div class="container">
+      <h2 id="settingupdigitaloceansettings">Setting up Digital Ocean settings</h2>
 
-    <h2 id="runninganethereumnodeondigitalocean">Running an Ethereum Node on Digital Ocean</h2>
+      <p>First we will go to "Settings" and then click on "Security".</p>
 
-    <h2 id="settingupdigitaloceansettings">Setting up Digital Ocean settings</h2>
+      <p>We will then add an SSH key.  To do this we will use SSH-keygen.</p>
 
-    <p>First we will go to "Settings" and then click on "Security".</p>
+      <p>Running <code>ssh-keygen -t rsa</code> will generate an SSH key for us.</p>
 
-    <p>We will then add an SSH key.  To do this we will use SSH-keygen.</p>
+      <p>You will be required to create a passphrase (I recommend using a tool like LastPass or 1Pass).</p>
 
-    <p>Running <code>ssh-keygen -t rsa</code> will generate an SSH key for us.</p>
+      <p>Then run <code>pbcopy &lt; ~/.ssh/id_rsa.pub</code> to put your key into your clipboard.</p>
 
-    <p>You will be required to create a passphrase (I recommend using a tool like LastPass or 1Pass).</p>
+      <p>Copy and paste.</p>
 
-    <p>Then run <code>pbcopy &lt; ~/.ssh/id_rsa.pub</code> to put your key into your clipboard.</p>
+      <h2 id="creatingthedroplet">Creating the Droplet.</h2>
 
-    <p>Copy and paste.</p>
+      <p>Select the droplets screen.</p>
 
-    <h2 id="creatingthedroplet">Creating the Droplet.</h2>
+      <p>It is best to select <code>Ubuntu 16.04</code> since this is what this guide used.</p>
 
-    <p>Select the droplets screen.</p>
+      <p>I then recommend selection the $5/mo droplet size.</p>
 
-    <p>It is best to select <code>Ubuntu 16.04</code> since this is what this guide used.</p>
+      <p>You can select any region you wish, I chose Toronto.</p>
 
-    <p>I then recommend selection the $5/mo droplet size.</p>
+      <p>Make sure your SSH key is selected if you set that up.</p>
 
-    <p>You can select any region you wish, I chose Toronto.</p>
+      <h2 id="creatingauser">Creating a User</h2>
 
-    <p>Make sure your SSH key is selected if you set that up.</p>
+      <p>To create a user we run <code>adduser username</code>.  We then make this user to the sudo group with <code>usermod -aG sudo username</code>.</p>
 
-    <h2 id="creatingauser">Creating a User</h2>
+      <p>We must then allow this user to connect using our public key.  On our host machine run <code>pbcopy &lt; ~/.ssh/id_rsa.pub</code>.  </p>
 
-    <p>To create a user we run <code>adduser username</code>.  We then make this user to the sudo group with <code>usermod -aG sudo username</code>.</p>
+      <p>Now, back on the server run <code>su - username</code> to login to that user.  Now, <code>mkdir ~/.ssh</code> and <code>chmod 700 ~/.ssh</code> to create the <code>.ssh</code> dir and allow writing.  </p>
 
-    <p>We must then allow this user to connect using our public key.  On our host machine run <code>pbcopy &lt; ~/.ssh/id_rsa.pub</code>.  </p>
+      <p>Now copy and paste your public key to <code>~/.ssh/authorized_keys</code>.  Then restrict the permissions with <code>chmod 600 ~/.ssh</code>.  We can now login with the new user.</p>
 
-    <p>Now, back on the server run <code>su - username</code> to login to that user.  Now, <code>mkdir ~/.ssh</code> and <code>chmod 700 ~/.ssh</code> to create the <code>.ssh</code> dir and allow writing.  </p>
+      <p>We now disable root by changing <code>PermitRootLogin yes</code> to <code>PermitRootLogin no</code> in <code>/etc/ssh/sshd_config</code>, and then restart the SSH daemon with <code>sudo service sshd restart</code>.</p>
 
-    <p>Now copy and paste your public key to <code>~/.ssh/authorized_keys</code>.  Then restrict the permissions with <code>chmod 600 ~/.ssh</code>.  We can now login with the new user.</p>
+      <h2 id="runninggeth">Running Geth</h2>
 
-    <p>We now disable root by changing <code>PermitRootLogin yes</code> to <code>PermitRootLogin no</code> in <code>/etc/ssh/sshd_config</code>, and then restart the SSH daemon with <code>sudo service sshd restart</code>.</p>
+      <p>Run the following commands:</p>
 
-    <h2 id="runninggeth">Running Geth</h2>
+      <pre><code>
+      sudo apt-get install software-properties-common
+      sudo add-apt-repository -y ppa:ethereum/ethereum
+      sudo apt-get update
+      sudo apt-get install ethereum
+      </code></pre>
 
-    <p>Run the following commands:</p>
+      <h2 id="installingsupervisor">Installing Supervisor</h2>
 
-    <pre><code>sudo apt-get install software-properties-common
-    sudo add-apt-repository -y ppa:ethereum/ethereum
-    sudo apt-get update
-    sudo apt-get install ethereum
-    </code></pre>
+      <p>Run <code>sudo apt-get install supervisor</code>.  To verify it has installed properly run <code>sudo service supervisor restart</code>.</p>
 
-    <h2 id="installingsupervisor">Installing Supervisor</h2>
+      <h2 id="puttingitalltogether">Putting it all Together</h2>
 
-    <p>Run <code>sudo apt-get install supervisor</code>.  To verify it has installed properly run <code>sudo service supervisor restart</code>.</p>
+      <p>We will now create a file for Supervisor to autostart Geth.</p>
 
-    <h2 id="puttingitalltogether">Putting it all Together</h2>
+      <p>Create <code>/etc/supervisor/conf.d/geth.conf</code> using <code>sudo /touch /etc/supervisor/conf.d/geth.conf</code>.</p>
 
-    <p>We will now create a file for Supervisor to autostart Geth.</p>
+      <p>Now, using your favorite text editor open the file and add:</p>
 
-    <p>Create <code>/etc/supervisor/conf.d/geth.conf</code> using <code>sudo /touch /etc/supervisor/conf.d/geth.conf</code>.</p>
+      <pre><code>
+      [program:geth]
+      command=/usr/bin/geth --fast
+      autostart=true
+      autorestart=true
+      stderr_logfile=/var/log/supervisor/geth.err.log
+      stdout_logfile=/var/log/supervisor/geth.out.log
+      </code></pre>
 
-    <p>Now, using your favorite text editor open the file and add:</p>
+      <p>Now restart Supervisor <code>sudo service supervisor restart</code>.</p>
 
-    <pre><code>[program:geth]
-    command=/usr/bin/geth --fast
-    autostart=true
-    autorestart=true
-    stderr_logfile=/var/log/supervisor/geth.err.log
-    stdout_logfile=/var/log/supervisor/geth.out.log
-    </code></pre>
+      <h2 id="usingthis">Using this</h2>
 
-    <p>Now restart Supervisor <code>sudo service supervisor restart</code>.</p>
-
-    <h2 id="usingthis">Using this</h2>
-
-    <p>We can attach to the console at anytime now using <code>sudo geth attach /root/.ethereum/geth.ipc</code>.</p>
+      <p>We can attach to the console at anytime now using <code>sudo geth attach /root/.ethereum/geth.ipc</code>.</p>
+    </div>
 
   </body>
 </html>
