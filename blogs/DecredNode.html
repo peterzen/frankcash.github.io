@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <link rel="stylesheet" type="text/css" href="../stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="../stylesheets/github-dark.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="../stylesheets/print.css" media="print">
+
+    <title>Running a Decred Node on Digital Ocean</title>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Why Run a Decred Node?</h2>
+      <p>Nodes help the community by storing the blockchain and allowing others to access it.</p>
+      <p>Keeping the blockchain decentralized is very important to having a rigid network.</p>
+      <p>If you're interested in learning more about <a href="https://decred.org/">decred</a>.</p>
+    </div>
+    <div class="container">
+      <section id="main_content">
+        <p>If you find this guide helpful please consider donating ETH to <code>0xff6492f6d2a2d1194061751c6b350e4fa5ff34f2</code>.</p>
+
+        <h2 id="settingupdigitaloceansettings">Setting up Digital Ocean settings</h2>
+
+        <p>First we will go to "Settings" and then click on "Security".</p>
+
+        <p>We will then add an SSH key.  To do this we will use SSH-keygen.</p>
+
+        <p>Running <code>ssh-keygen -t rsa</code> will generate an SSH key for us.</p>
+
+        <p>You will be required to create a passphrase (I recommend using a tool like LastPass or 1Pass).</p>
+
+        <p>Then run <code>pbcopy &lt; ~/.ssh/id_rsa.pub</code> to put your key into your clipboard.</p>
+
+        <p>Copy and paste.</p>
+
+        <h2 id="creatingthedroplet">Creating the Droplet.</h2>
+
+        <p>Select the droplets screen.</p>
+
+        <p>It is best to select <code>Ubuntu 16.04</code> since this is what this guide used.</p>
+
+        <p>I then recommend selection the $5/mo droplet size.</p>
+
+        <p>You can select any region you wish, I chose Toronto.</p>
+
+        <p>Make sure your SSH key is selected if you set that up.</p>
+
+        <h2 id="creatingauser">Creating a User</h2>
+
+        <p>To create a user we run <code>adduser username</code>.  We then make this user to the sudo group with <code>usermod -aG sudo username</code>.</p>
+
+        <p>We must then allow this user to connect using our public key.  On our host machine run <code>pbcopy &lt; ~/.ssh/id_rsa.pub</code>.  </p>
+
+        <p>Now, back on the server run <code>su - username</code> to login to that user.  Now, <code>mkdir ~/.ssh</code> and <code>chmod 700 ~/.ssh</code> to create the <code>.ssh</code> dir and allow writing.  </p>
+
+        <p>Now copy and paste your public key to <code>~/.ssh/authorized_keys</code>.  Then restrict the permissions with <code>chmod 600 ~/.ssh</code>.  We can now login with the new user.</p>
+
+        <p>We now disable root by changing <code>PermitRootLogin yes</code> to <code>PermitRootLogin no</code> in <code>/etc/ssh/sshd_config</code>, and then restart the SSH daemon with <code>sudo service sshd restart</code>.</p>
+
+        <h2 id="downloadingdecred">Downloading Decred</h2>
+
+        <p>Download the correct Decred install for your machine from <a href="https://github.com/decred/decred-release/releases/tag/v1.0.1">Github</a>.  If you're using a Digital Ocean machine you want the Linux AMD64.</p>
+
+        <pre><code>
+        $ wget https://github.com/decred/decred-release/releases/download/v1.0.1/dcrinstall-linux-amd64-v1.0.1
+        </code></pre>
+
+        <p>Next make the download executable.</p>
+
+        <pre><code>$ chmod +x dcrinstall-linux-amd64-v1.0.1
+        </code></pre>
+
+        <p>Now, execute the node and follow the install process.</p>
+
+        <pre><code>
+        $ ./dcrinstall-linux-amd64-v1.0.1
+        </code></pre>
+
+        <p>You will be prompted to either create or import a wallet.  If you're creating a wallet consider using a tool like <a href="https://www.lastpass.com/">LastPass</a> to create a secure password.</p>
+
+        <h2 id="installingsupervisor">Installing Supervisor</h2>
+
+        <p>Supervisor is a process control system that is quite easy to interface with.  We will use it to ensure the node daemon is constantly running.</p>
+
+        <pre><code>
+        $ sudo apt-get update
+        $ sudo apt-get upgrade
+        $ sudo apt-get install supervisor
+        </code></pre>
+
+        <h2 id="settingeverythinginmotion">Setting Everything In Motion</h2>
+
+        <p>We will now create a file for Supervisor to autostart the Decred Node Daemon.</p>
+
+        <p>Create <code>/etc/supervisor/conf.d/decred.conf</code> using <code>sudo /touch /etc/supervisor/conf.d/monerod.conf</code>.</p>
+
+        <pre><code>
+        [program:decred]
+        command=~/decred/dcrd
+        autostart=true
+        autorestart=true
+        stderr_logfile=/var/log/supervisor/monerod.err.log
+        stdout_logfile=/var/log/supervisor/monerod.out.log
+        </code></pre>
+
+        <p>If you found this guide helpful please consider donating ETH to <code>0xff6492f6d2a2d1194061751c6b350e4fa5ff34f2</code>.</p>
+      </section>
+    </div>
+  </body>
+</html>
